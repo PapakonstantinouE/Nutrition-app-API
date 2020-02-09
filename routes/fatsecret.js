@@ -35,22 +35,22 @@ var options = {
 exports.getToken = function(req, res){
 try {
     
-    // const current_time = (new Date() / 1000);
-    // pool.query("SELECT * FROM fatsecret", function (err, result) {
-    //     const data_time = result[0].time;
-    //     if(current_time<data_time){
-    //         //do nothing
-    //         res.send("Token is working fine")
-    //     }else{
+    const current_time = (new Date() / 1000);
+    pool.query("SELECT * FROM fatsecret", function (err, result) {
+        const data_time = result[0].time;
+        if(current_time<data_time){
+            //do nothing
+            res.send("Token is working fine")
+        }else{
             request(options, function (error, response, body) {
                 if (error) throw new Error(error); 
                 const token = body.access_token;
-    //             pool.query(`UPDATE fatsecret SET time = ${current_time}, token = '${token}' WHERE id = 1`, function (err){
-                     res.send("Token successfully updated")
-                 })
-    //         });
-    //     }
-    // });
+                pool.query(`UPDATE fatsecret SET time = ${current_time}, token = '${token}' WHERE id = 1`, function (err){
+                    res.send("Token successfully updated")
+                })
+            });
+        }
+    });
 } catch (err) {
     console.log(err);
 }}
