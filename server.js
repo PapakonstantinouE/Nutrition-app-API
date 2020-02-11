@@ -36,3 +36,39 @@ app.listen(port,() => console.log(`Listening on port ${port}`));
 // NECESSARY TO VALIDATE FATSECRET TOKEN
 //the request is big so i transfered it in fatsecret.js and i call it from there
 app.get('/api/tokenTest', fatsecret.getToken);
+
+//endpoint for login
+app.post('/api/login', (req,res) =>{
+    var body = req.body;
+    var tempValues = [body.username, body.password]
+    try {
+        pool.query(`SELECT * FROM users WHERE username=? and password=?`, tempValues, function(err,result){
+            if (isEmptyObject(result)) return res.send('Username or password is wrong. Please try again.');
+            res.send(result);
+        })
+    }catch(err){
+        res.send("Oops, something went wrong. I'll let our back-end team know! ERROR CODE: 10");
+    }
+})
+
+//endpoint to signup
+app.post('/api/signup', (req,res) =>{
+    var body = req.body;
+    var tempValues = [body.username, body.password, body.email, body.weight, body.height]
+    try {
+        pool.query(`INSERT INTO users (username,password,email,weight,height) VALUES (?,?,?,?,?)`, tempValues, function(err,result){
+            if (!err) {
+                res.send('User has successfully created');
+            }else{
+                res.send('Something went wrong');
+            }
+        })
+    }catch(err){
+        res.send("Oops, something went wrong. I'll let our back-end team know! ERROR CODE: 10");
+    }
+})
+
+//Function to check if json file is empty
+function isEmptyObject(obj) {
+    return !Object.keys(obj).length;
+};
