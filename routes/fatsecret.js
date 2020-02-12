@@ -4,7 +4,6 @@ var cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 
-
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -45,7 +44,7 @@ try {
             request(options, function (error, response, body) {
                 if (error) throw new Error(error); 
                 const token = body.access_token;
-                pool.query(`UPDATE fatsecret SET time = ${current_time}, token = '${token}' WHERE id = 1`, function (err){
+                pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
                     res.send("Token successfully updated")
                 })
             });
