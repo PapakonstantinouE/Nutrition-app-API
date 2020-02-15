@@ -28,7 +28,7 @@ var pool = mysql.createPool({
 app.get('/hello', (req, res) => res.send('Hello World!'))
 
 app.get('/api',(req,res) => {
-    res.send('API is up & working.');
+    res.send(token);
 });
 
 var port = process.env.PORT || 8080;
