@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 var request = require("request");
 const querystring = require("querystring");
 
-const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
+const fixieRequest = request.defaults({'proxy': process.env.QUOTAGUARDSTATIC_URL});
 
 //this is necessary to create the connection with the database
 const dotenv = require('dotenv');
