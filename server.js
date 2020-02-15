@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 var request = require("request");
 const querystring = require("querystring");
 
+const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
+
 //this is necessary to create the connection with the database
 const dotenv = require('dotenv');
 dotenv.config();
@@ -93,12 +95,19 @@ var options = {
     // },
     headers: { 
         'Content-Type': 'application/json',
-        'authorization': 'Bearer ' + token
+        'authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ1MjZBMkFCNkQ0MkQ5REIwMjBEMThBRDMxRTE5MTdCMUUzMjg2RTUiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJSU2FpcTIxQzJkc0NEUml0TWVHUmV4NHlodVUifQ.eyJuYmYiOjE1ODE3ODcyMTIsImV4cCI6MTU4MTg3MzYxMiwiaXNzIjoiaHR0cHM6Ly9vYXV0aC5mYXRzZWNyZXQuY29tIiwiYXVkIjoiYmFzaWMiLCJjbGllbnRfaWQiOiI3MzBhYWU0ZjYzYTc0ZjkxYTE3NGFiZThlNTQ3NDE2OSIsInNjb3BlIjpbImJhc2ljIl19.L0ZRYM-Rkl7Jg0q_dsxne1Hc4wnbMZurtJ6QNaCRIoGD2MWtGjCAIsDexUXoST0JbnYKeul2hwhl81Rni3H6T9rdLxw8pGKypmo-b2YBMWxW_NmZ34pZn60xLGVfSCQJ51m0SZg6RRr71tAGhHj9kmgCZjX4NKs9fzAtDBdNgYQAByLuUqNom17f_nzK5zAGrcay8JZTqFxN7rnFhTNQqXG55vi65ER5oK_fGH03r8oOkVbm2rjCO4Dc0KPkJM7P6vML5JsdDUFi9DGASdzyFgTJ-wOambJeCrg6iPG27n4QqwdcqHb_SW9-sYgkCLrvzHJHEp987-I8L2rw-mBfig'
     }
  };
 
 app.get('/api/foodget',(req,res) => {
     request(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+});
+
+app.get('/api/foodget1',(req,res) => {
+    fixieRequest(options, function (error, response, body) {
         if (error) throw new Error(error); 
         res.send(body);
     });
