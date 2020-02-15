@@ -28,7 +28,7 @@ var pool = mysql.createPool({
 app.get('/hello', (req, res) => res.send('Hello World!'))
 
 app.get('/api',(req,res) => {
-    res.send(token);
+    res.send('API is up & working.');
 });
 
 var port = process.env.PORT || 8080;
@@ -93,7 +93,7 @@ var options = {
     // },
     headers: { 
         'Content-Type': 'application/json',
-        'authorization': `Bearer ${token}`
+        'authorization': 'Bearer ' + token
     }
  };
 
