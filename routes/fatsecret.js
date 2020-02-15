@@ -31,20 +31,23 @@ var options = {
    },
    json: true
 };
+global.token= "";
 exports.getToken = function(req, res){
 try {
     
-    const current_time = (new Date() / 1000);
+    current_time = (new Date() / 1000);
     pool.query("SELECT * FROM fatsecret", function (err, result) {
         const data_time = result[0].time;
         if(current_time<data_time){
             //do nothing
+            token = result[0].token;
             res.send("Token is working fine")
         }else{
             request(options, function (error, response, body) {
                 if (error) throw new Error(error); 
                 const token = body.access_token;
                 pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
+                    token = result[0].token;
                     res.send("Token successfully updated")
                 })
             });
