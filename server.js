@@ -1,6 +1,7 @@
 const express = require('express'),
     fatsecret = require('./routes/fatsecret'),
-    user = require('./routes/user');
+    user = require('./routes/user'),
+    authRoute = require('./routes/auth');
 var cors = require('cors');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
@@ -16,8 +17,9 @@ dotenv.config();
 
 var app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json);
 app.use(cors());
 
 var pool = mysql.createPool({
@@ -46,6 +48,9 @@ app.post('/api/login', user.login);
 
 //endpoint to signup
 app.post('/api/signup', user.signup);
+
+//for auth
+app.use('/api/user', authRoute);
 
 //Function to check if json file is empty
 function isEmptyObject(obj) {
