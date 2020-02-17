@@ -1,8 +1,7 @@
+const router = require('express').Router();
 const mysql = require('mysql');
-var request = require("request");
-var cors = require('cors');
-const dotenv = require('dotenv');
-dotenv.config();
+const request = require("request");
+require('dotenv').config();
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -31,28 +30,28 @@ var options = {
    },
    json: true
 };
-// global.token= "";
-exports.getToken = function(req, res){
-try {
-    
-    current_time = (new Date() / 1000);
-    pool.query("SELECT * FROM fatsecret", function (err, result) {
-        const data_time = result[0].time;
-        if(current_time<data_time){
-            //do nothing
-            // token = result[0].token;
-            res.send("Token is working fine")
-        }else{
-            request(options, function (error, response, body) {
-                if (error) throw new Error(error); 
-                const token = body.access_token;
-                pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
-                    // token = result[0].token;
-                    res.send("Token successfully updated")
-                })
-            });
-        }
-    });
-} catch (err) {
-    console.log(err);
-}}
+router.get('/',(req, res) => {
+    try {
+        
+        current_time = (new Date() / 1000);
+        pool.query("SELECT * FROM fatsecret", function (err, result) {
+            const data_time = result[0].time;
+            if(current_time<data_time){
+                //do nothing
+                res.send("Token is working fine")
+            }else{
+                request(options, function (error, response, body) {
+                    if (error) throw new Error(error); 
+                    const token = body.access_token;
+                    pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
+                        res.send("Token successfully updated")
+                    })
+                });
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+module.exports = router;

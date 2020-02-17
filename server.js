@@ -1,11 +1,10 @@
 const express = require('express'),
-    fatsecret = require('./routes/fatsecret'),
-    user = require('./routes/user'),
-    authRoute = require('./routes/auth');
-var cors = require('cors');
-const mysql = require('mysql');
+    fatsecretRoute = require('./routes/fatsecret'),
+    authRoute = require('./routes/auth'),
+    postRoute = require('./routes/posts');
+const cors = require('cors');
 const bodyParser = require('body-parser');
-var request = require("request");
+const request = require("request");
 const querystring = require("querystring");
 
 // const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
@@ -17,20 +16,9 @@ dotenv.config();
 
 var app = express();
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-
-var pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
-app.get('/hello', (req, res) => res.send('Hello World!'))
 
 app.get('/api',(req,res) => {
     res.send('API is up & working.');
@@ -39,24 +27,13 @@ app.get('/api',(req,res) => {
 var port = process.env.PORT || 8080;
 app.listen(port,() => console.log(`Listening on port ${port}`)); 
 
+// Route Middlewares
+app.use('/api/user', authRoute);
+app.use('/api/posts', postRoute);
+
 // NECESSARY TO VALIDATE FATSECRET TOKEN
 //the request is big so i transfered it in fatsecret.js and i call it from there
-app.get('/api/tokenTest', fatsecret.getToken);
-
-//endpoint for login
-app.post('/api/login', user.login);
-
-//endpoint to signup
-app.post('/api/signup', user.signup);
-
-//for auth
-app.use('/api/user', authRoute);
-
-//Function to check if json file is empty
-function isEmptyObject(obj) {
-    return !Object.keys(obj).length;
-};
-
+app.use('/api/tokenTest', fatsecretRoute);
 
 
 var options = {
