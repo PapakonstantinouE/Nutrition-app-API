@@ -71,4 +71,22 @@ app.get('/api/foodget1',(req,res) => {
     });
 });
 
+app.get('/api/user/bmr/:height/:weight/:age/:gender', (req, res) => {
+    var height = parseInt(req.params.height);
+    var weight = parseInt(req.params.weight);
+    var age = parseInt(req.params.age);
+    var gender = req.params.gender;
+
+    var options = {
+        method: 'GET',
+        url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
+      })}`
+     };
+     request(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+    
+
+});
  
