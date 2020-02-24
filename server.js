@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const request = require("request");
 const querystring = require("querystring");
+const schedule = require('node-schedule');
 
 // const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
 const fixieRequest = request.defaults({'proxy': process.env.QUOTAGUARDSTATIC_URL});
@@ -33,7 +34,7 @@ app.use('/api/posts', postRoute);
 
 // NECESSARY TO VALIDATE FATSECRET TOKEN
 //the request is big so i transfered it in fatsecret.js and i call it from there
-app.use('/api/tokenTest', fatsecretRoute);
+// app.use('/api/tokenTest', fatsecretRoute);
 
 
 var options = {
@@ -90,3 +91,7 @@ app.get('/api/user/bmr/:height/:weight/:age/:gender', (req, res) => {
 
 });
  
+// REFRESH TOKEN EVERYDAY AT 6:00 AM
+var j = schedule.scheduleJob({hour: 06, minute: 00}, function(){
+    fatsecretRoute()
+});
