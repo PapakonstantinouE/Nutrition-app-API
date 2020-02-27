@@ -16,10 +16,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 var app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+
+//this is needed to make auth-token accessible in front
+const corsOptions = {
+    exposedHeaders: 'auth-token',
+  };
+app.use(cors(corsOptions));
 
 app.get('/api',(req,res) => {
     res.send('API is up & working.');
