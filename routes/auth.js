@@ -19,7 +19,7 @@ router.post('/register', (req,res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     try{
-        // const username = req.body.username;
+        const username = req.body.username;
         var tempValues = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height]
         pool.query(`SELECT * FROM users WHERE username=?`,username, function(err,result1){
             if (!isEmptyObject(result1)) return res.status(400).send("Username already exist, try another one"); 
