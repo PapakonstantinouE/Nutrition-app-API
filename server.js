@@ -106,9 +106,13 @@ app.post('/api/user/bmr', (req, res) => {
         url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
       })}`
      };
-     request(options, function (error, response, body) {
+     request(options, function (error, response, body1) {
         if (error) throw new Error(error); 
-        res.send(body);
+        
+        // var body2 = body1.slice(7);
+        // var body3 = JSON.parse(body2);
+        // var body4 = JSON.parse(body3);
+        res.send(body1);
     });
     
 
