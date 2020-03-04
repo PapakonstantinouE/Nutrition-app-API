@@ -11,7 +11,9 @@ var pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
-
+router.post('/register1', (req,res) => {
+    console.log(req.body)
+})
 
 router.post('/register', (req,res) => {
     // VALIDATE THE DATA BEFORE MAKE A USER
@@ -20,11 +22,11 @@ router.post('/register', (req,res) => {
 
     try{
         const username = req.body.username;
-        var tempValues = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height]
+        var tempValues = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height, req.body.age, req.body.gender]
         pool.query(`SELECT * FROM users WHERE username=?`,username, function(err,result1){
             if (!isEmptyObject(result1)) return res.status(400).send("Username already exist, try another one"); 
             else{
-                pool.query(`INSERT INTO users (email,username,password,weight,height) VALUES (?,?,?,?,?)`, tempValues, function(err,result){
+                pool.query(`INSERT INTO users (email,username,password,weight,height,age,gender) VALUES (?,?,?,?,?,?,?)`, tempValues, function(err,result){
                     if (!err) {
                         res.send('User has successfully created');
                     }else{
@@ -37,6 +39,7 @@ router.post('/register', (req,res) => {
         res.status(400).send(err);
     }
 });
+
 
 
 router.post('/login', (req,res) => {

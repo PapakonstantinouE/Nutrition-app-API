@@ -8,7 +8,9 @@ const registerValidation = data => {
         email: Joi.string().min(6).required().email(),
         password: Joi.string().min(4).required(),
         weight: Joi.number(),
-        height: Joi.number()
+        height: Joi.number(),
+        age: Joi.number(),
+        gender: Joi.boolean(),
     };
     return Joi.validate(data, schema);
 };
@@ -22,5 +24,8 @@ const loginValidation = data =>{
     return Joi.validate(data, schema);
 };
 
+
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
+
