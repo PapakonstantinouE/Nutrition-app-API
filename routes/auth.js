@@ -14,64 +14,47 @@ var pool = mysql.createPool({
 });
 
 
-// router.post('/bmr', (req,res) => {
-//     var height = req.body.height;
-//     var weight = req.body.weight;
-//     var age = req.body.age;
-//     var gender = req.body.gender;
-
-//     var options = {
-//         method: 'GET',
-//         url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
-//       })}`
-//      };
-//      request(options, function (error, response, body) {
-//         if (error) throw new Error(error);
-//         // var bmr = body. 
-//         pool.query(`UPDATE users SET bmr = ${1345.5} WHERE id = 1`)
-//         res.send(body);
-//     });
-// })
-
 router.post('/register', (req,res) => {
     // VALIDATE THE DATA BEFORE MAKE A USER
     const {error} = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     try{
+        var height = req.body.height;
+        var weight = req.body.weight;
+        var age = req.body.age;
+        var gender = req.body.gender;
+
         // var checkValues = [ req.body.email, req.body.username]
         var checkValues = [req.body.username]
-        var tempValues  = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height, req.body.age, req.body.gender,0]
-
-        // var height = req.body.height;
-        // var weight = req.body.weight;
-        // var age = req.body.age;
-        // var gender = req.body.gender;
+        var tempValues  = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height, req.body.age, req.body.gender]
 
         // pool.query(`SELECT * FROM users WHERE email=? or username=?`, checkValues, function(err,result1){
         pool.query(`SELECT * FROM users WHERE username=?`, checkValues, function(err,result1){
             if (!isEmptyObject(result1)) return res.status(400).send("Username or email already exist, try another one"); 
             else{
-                pool.query(`INSERT INTO users (email,username,password,weight,height,age,gender,bmr) VALUES (?,?,?,?,?,?,?,?)`, tempValues, function(err,result){
-                    if (!err) {
-                        res.send('User has successfully created');
-                        // var options = {
-                        //     method: 'GET',
-                        //     url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
-                        // })}`
-                        // };
-                        // request(options, function (error, response, body) {
-                        //     if (error) throw new Error(error);
-                        //     // var bmr = body. 
-                        //     pool.query(`UPDATE users SET bmr = ${1345.5} WHERE username = ?`,checkValues)
-                        //     res.send("we did it");
-                        // });
-                    }else{
-                        // res.send('Something went wrong');
-                        // to check what shit 'something' goes wrong 
-                         res.send(err.message);
+                //First find bmr
+                var options = {
+                    method: 'GET',
+                    url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
+                })}`
+                };
+                request(options, function (error, response, body) {
+                    if (error) throw new Error(error); 
+                    else{
+                        //and when you find it, then create the user with all the details
+                        var bmr = 1500
+                        pool.query(`INSERT INTO users (email,username,password,weight,height,age,gender,bmr) VALUES (?,?,?,?,?,?,?,${bmr})`, tempValues, function(err,result){
+                            if (!err) {
+                                res.send('User has successfully created');
+                            }else{
+                                // res.send('Something went wrong');
+                                // to check what shit 'something' goes wrong 
+                                res.send(err.message);
+                            }
+                        })
                     }
-                })
+                });
             }
         })
     }catch(err){
