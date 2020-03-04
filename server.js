@@ -75,48 +75,6 @@ app.get('/api/foodget1',(req,res) => {
         res.send(body);
     });
 });
-
-// app.get('/api/user/bmr/:height/:weight/:age/:gender', (req, res) => {
-//     var height = parseInt(req.params.height);
-//     var weight = parseInt(req.params.weight);
-//     var age = parseInt(req.params.age);
-//     var gender = req.params.gender;
-
-//     var options = {
-//         method: 'GET',
-//         url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
-//       })}`
-//      };
-//      request(options, function (error, response, body) {
-//         if (error) throw new Error(error); 
-//         res.send(body);
-//     });
-    
-
-// });
-
-app.post('/api/user/bmr', (req, res) => {
-    var height = req.body.height;
-    var weight = req.body.weight;
-    var age = req.body.age;
-    var gender = req.body.gender;
-
-    var options = {
-        method: 'GET',
-        url: `https://urvipaithankar.herokuapp.com/bmr/index.php/${height}/${weight}/${age}/${gender} 
-      })}`
-     };
-     request(options, function (error, response, body1) {
-        if (error) throw new Error(error); 
-        
-        // var body2 = body1.slice(7);
-        // var body3 = JSON.parse(body2);
-        // var body4 = JSON.parse(body3);
-        res.send(body1);
-    });
-    
-
-});
  
 // REFRESH TOKEN EVERYDAY AT 6:00 AM
 var j = schedule.scheduleJob({hour: 06, minute: 00}, function(){

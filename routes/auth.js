@@ -43,7 +43,9 @@ router.post('/register', (req,res) => {
                     if (error) throw new Error(error); 
                     else{
                         //and when you find it, then create the user with all the details
-                        var bmr = 1500
+                        var body1 = body.slice(7);
+                        var body2 = JSON.parse(body1);
+                        var bmr= body2['bmr'];
                         pool.query(`INSERT INTO users (email,username,password,weight,height,age,gender,bmr) VALUES (?,?,?,?,?,?,?,${bmr})`, tempValues, function(err,result){
                             if (!err) {
                                 res.send('User has successfully created');
