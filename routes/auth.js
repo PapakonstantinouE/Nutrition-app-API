@@ -21,16 +21,20 @@ router.post('/register', (req,res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     try{
-        const username = req.body.username;
-        var tempValues = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height, req.body.age, req.body.gender]
-        pool.query(`SELECT * FROM users WHERE username=?`,username, function(err,result1){
-            if (!isEmptyObject(result1)) return res.status(400).send("Username already exist, try another one"); 
+        // var checkValues = [ req.body.email, req.body.username]
+        var checkValues = [req.body.username]
+        var tempValues  = [ req.body.email, req.body.username, req.body.password, req.body.weight, req.body.height, req.body.age, req.body.gender]
+        // pool.query(`SELECT * FROM users WHERE email=? or username=?`, checkValues, function(err,result1){
+        pool.query(`SELECT * FROM users WHERE username=?`, checkValues, function(err,result1){
+            if (!isEmptyObject(result1)) return res.status(400).send("Username or email already exist, try another one"); 
             else{
                 pool.query(`INSERT INTO users (email,username,password,weight,height,age,gender) VALUES (?,?,?,?,?,?,?)`, tempValues, function(err,result){
                     if (!err) {
                         res.send('User has successfully created');
                     }else{
                         res.send('Something went wrong');
+                        // to check what shit 'something' goes wrong 
+                        // res.send(err.message);
                     }
                 })
             }

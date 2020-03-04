@@ -10,7 +10,7 @@ const registerValidation = data => {
         weight: Joi.number(),
         height: Joi.number(),
         age: Joi.number(),
-        gender: Joi.boolean(),
+        gender: Joi.string().min(4).max(6),
     };
     return Joi.validate(data, schema);
 };
