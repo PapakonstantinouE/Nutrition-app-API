@@ -4,6 +4,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const request = require("request");
 const {registerValidation,loginValidation} = require('../validation');
+const verify = require('./verifyToken');
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -77,12 +78,18 @@ router.post('/login', (req,res) => {
             if (isEmptyObject(result)) return res.send('Username or password is wrong. Please try again.');
 
             //CREATE AND ASSIGN A TOKEN
-            const token = jwt.sign({username: result[0].username},process.env.TOKEN_SECRET);
+            const token = jwt.sign({username: result[0].username},process.env.TOKEN_SECRET , { expiresIn: '24h' });
             res.header('auth-token', token).send('Logged in!');
         })        
     }catch(err){
         res.status(400).send(err);
     }
+});
+
+router.get('/getUser', verify , (req,res) => {
+    const token = req.header('Authorization');
+    var decoded = jwt.decode(token, {complete: true});
+    res.send(decoded.payload.username)
 });
 
 module.exports = router;
