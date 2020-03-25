@@ -75,6 +75,17 @@ app.get('/api/foodget1',(req,res) => {
         res.send(body);
     });
 });
+app.get('/api/chart', (req,res) => {
+    res.send({
+         
+            protein: '20',
+            sodium: '5'
+        
+    })
+
+    
+})
+
  
 // REFRESH TOKEN EVERYDAY AT 6:00 AM
 var j = schedule.scheduleJob({hour: 06, minute: 00}, function(){
