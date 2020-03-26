@@ -1,7 +1,13 @@
 const router = require('express').Router();
 const mysql = require('mysql');
-const request = require("request");
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const request = require("request");
+const querystring = require("querystring");
+const schedule = require('node-schedule');
+
+// const fixieRequest = request.defaults({'proxy': process.env.FIXIE_URL});
+const fixieRequest = request.defaults({'proxy': process.env.QUOTAGUARDSTATIC_URL});
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -11,63 +17,64 @@ var pool = mysql.createPool({
     database: process.env.DB_NAME
 });
 
-//NECESSARY TO VALIDATE FATSECRET TOKEN
-clientID = process.env.CLIENT_ID,
-clientSecret = process.env.CLIENT_SECRET
 
-var options = {
-   method: 'POST',
-   url: 'https://oauth.fatsecret.com/connect/token',
-   method : 'POST',
-   auth : {
-      user : clientID,
-      password : clientSecret
-   },
-   headers: { 'content-type': 'application/json'},
-   form: {
-      'grant_type': 'client_credentials',
-      'scope' : 'basic'
-   },
-   json: true
-};
+let token;
 
-module.exports = function(req,res,next){
-    request(options, function (error, response, body) {
-        current_time = (new Date() / 1000);
-        if (error) throw new Error(error); 
-        const token = body.access_token;
-        pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
-            console.log("Token successfully updated "+token)
-        })
-        return token;
+//FOR THE SERVER
+token = schedule.scheduleJob({hour: 06, minute: 01}, function(){
+    pool.query("SELECT token FROM fatsecret", function(err, result){
+         return setValue(result[0].token);
     });
+});
+
+//FOR LOCAL PURPOSE
+pool.query("SELECT token FROM fatsecret", function(err, result){
+    setValue(result[0].token);
+});
+
+function setValue(value) {
+    token = value;
 }
 
 
-// router.get('/',(req, res) => {
-//     try {
-        
-//         current_time = (new Date() / 1000);
-//         pool.query("SELECT * FROM fatsecret", function (err, result) {
-//             const data_time = result[0].time;
-//             if(current_time<data_time){
-//                 //do nothing
-//                 res.send("Token is working fine")
-//             }else{
-            //     request(options, function (error, response, body) {
-            //         if (error) throw new Error(error); 
-            //         const token = body.access_token;
-            //         pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
-            //             res.send("Token successfully updated")
-            //         })
-            //     });
-            // }
-//         });
-//     } catch (err) {
-//         console.log(err);
-//     }
-// })
+router.get('/foodget/id::id',(req,res) => {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "food.get",
+          food_id: `${parseInt(req.params.id)}`,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+    request(options, function (error, response, body) {
+        console.log(global.token)
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+});
 
-// module.exports = router;
+router.get('/foodget1/id::id',(req,res) => {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "food.get",
+          food_id: `${parseInt(req.params.id)}`,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+     fixieRequest(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+});
 
 
+module.exports = router;
