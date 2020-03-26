@@ -2,6 +2,7 @@ const express = require('express'),
     fatsecretRoute = require('./routes/fatsecret'),
     authRoute = require('./routes/auth'),
     postRoute = require('./routes/posts');
+require('newrelic');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const request = require("request");
