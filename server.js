@@ -6,7 +6,8 @@ const express = require('express'),
     cors = require('cors'),
     bodyParser = require('body-parser'),
     request = require("request"),
-    schedule = require('node-schedule');
+    schedule = require('node-schedule'),
+    mongoose = require('mongoose');
 
 //this is necessary to create the connection with the database
 const dotenv = require('dotenv');
@@ -15,6 +16,10 @@ dotenv.config();
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+mongoose.connect(process.env.MONGODB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    console.log("Connected to mongoDB!")
+})
 
 //this is needed to make auth-token accessible in front
 const corsOptions = {
@@ -33,7 +38,7 @@ app.listen(port,() => console.log(`Listening on port ${port}`));
 app.use('/api/user', authRoute);
 app.use('/api/posts', postRoute);
 app.use('/api/food', fatsecretRoute)
- 
+
 //THIS IS NEEDED TO KEEP HEROKU-API AWAKE
 var ping = {
     method: 'GET',
