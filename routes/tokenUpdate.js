@@ -36,8 +36,12 @@ module.exports = function(req,res,next){
         current_time = (new Date() / 1000);
         if (error) throw new Error(error); 
         const token = body.access_token;
-        Token.updateOne({name: "fatsecretToken"}, {$set: {token: `${token}`, time: `${current_time+86400}`}}, () => {
-            console.log("Token successfully updated "+token)
+        Token.updateOne({name: "fatsecretToken"}, {$set: {token: `${token}`, time: `${current_time+86400}`}}, (err,res) => {
+            if(err){
+                console.log(err)
+            }else{
+                console.log("Token successfully updated "+token)
+            }
         })
 
         //FOR MYSQL

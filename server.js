@@ -17,8 +17,12 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGODB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
-    console.log("Connected to mongoDB!")
+mongoose.connect(process.env.MONGODB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true }, (err,res) => {
+    if(err){
+        console.log(err.message)
+    }else{
+        console.log("Connected to mongoDB!")
+    }
 })
 
 //this is needed to make auth-token accessible in front
@@ -55,8 +59,5 @@ var j = schedule.scheduleJob({hour: 06, minute: 00}, function(){
     updateToken()
 });
 app.get('/api/chart', (req,res) => {
-    res.send({  
-        protein: '20',
-        sodium: '5'  
-    })
+    res.send([10,3,29,11,17,14])
 })
