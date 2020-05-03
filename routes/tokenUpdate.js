@@ -26,17 +26,17 @@ var options = {
    headers: { 'content-type': 'application/json'},
    form: {
       'grant_type': 'client_credentials',
-      'scope' : 'basic'
+      'scope' : 'premier'
    },
    json: true
 };
 
 module.exports = function(req,res,next){
+    //den douleuei o elegxos gia to error, enw uparxei to deixnei null
     request(options, function (error, response, body) {
-        current_time = (new Date() / 1000);
         if (error) throw new Error(error); 
         const token = body.access_token;
-        Token.updateOne({name: "fatsecretToken"}, {$set: {token: `${token}`, time: `${current_time+86400}`}}, (err,res) => {
+        Token.updateOne({name: "fatsecretToken"}, {$set: {token: `${token}`}}, (err,res) => {
             if(err){
                 console.log(err)
             }else{

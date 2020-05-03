@@ -92,6 +92,7 @@ router.get('/foodsearch/:exp',(req,res) => {
         url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
           method: "foods.search",
           search_expression: `${req.params.exp}`,
+          max_results: 1,
           format: "json"
       })}`,
         headers: { 
@@ -110,6 +111,43 @@ router.get('/foodsearch1/:exp',(req,res) => {
         url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
           method: "foods.search",
           search_expression: `${req.params.exp}`,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+     fixieRequest(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+});
+
+router.get('/search/:exp',(req,res) => {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "foods.autocomplete",
+          expression: `${req.params.exp}`,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        res.send(body);
+    });
+});
+router.get('/search1/:exp',(req,res) => {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "foods.autocomplete",
+          expression: `${req.params.exp}`,
           format: "json"
       })}`,
         headers: { 

@@ -5,8 +5,7 @@ const tokenSchema = mongoose.Schema({
     token:{
         type: String,
         require: true
-    },
-    time: String
+    }
 })
 
 module.exports = mongoose.model('Token', tokenSchema)
