@@ -11,31 +11,6 @@ const Token = require("../model/fatsecretToken");
 const fixieRequest = request.defaults({'proxy': process.env.QUOTAGUARDSTATIC_URL});
 
 
-//FOR MYSQL
-// var pool = mysql.createPool({
-//     host: process.env.DB_HOST,
-//     port: process.env.DB_PORT,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_NAME
-// });
-
-// //FOR THE SERVER
-// token = schedule.scheduleJob({hour: 06, minute: 01}, function(){
-//     pool.query("SELECT token FROM fatsecret", function(err, result){
-//          return setValue(result[0].token);
-//     });
-// });
-
-// //FOR LOCAL PURPOSE
-// pool.query("SELECT token FROM fatsecret", function(err, result){
-//     setValue(result[0].token);
-// });
-
-// function setValue(value) {
-//     token = value;
-// }
-
 //FOR THE SERVER
 let token = schedule.scheduleJob({hour: 06, minute: 01}, function(){
     Token.findOne({name: "fatsecretToken"}, function(err,res){
@@ -83,6 +58,51 @@ router.get('/foodget1/:id',(req,res) => {
      fixieRequest(options, function (error, response, body) {
         if (error) throw new Error(error); 
         res.send(body);
+    });
+});
+
+function getfood(food, callback) {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "food.get",
+          food_id: `${food}`,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error); 
+        callback (body);
+    });
+}
+router.get('/foodsearchTest/:exp',(req,res) => {
+    var options = {
+        method: 'POST',
+        url: `https://platform.fatsecret.com/rest/server.api?${querystring.stringify({  
+          method: "foods.search",
+          search_expression: `${req.params.exp}`,
+          max_results: 1,
+          format: "json"
+      })}`,
+        headers: { 
+            'Content-Type': 'application/json',
+            'authorization': `Bearer ` + token
+        }
+     };
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        else{
+        var json1 = JSON.parse(body)
+        var food = JSON.parse(body).foods.food.food_id
+        //console.log(json1.foods.food.food_id);
+        }
+        getfood(food, (result) => {
+            res.send(result)
+        });
     });
 });
 
