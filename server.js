@@ -3,6 +3,7 @@ const express = require('express'),
     authRoute = require('./routes/auth'),
     postRoute = require('./routes/posts'),
     fatsecretRoute = require('./routes/fatsecret'),
+    mealsRoute = require('./routes/meals'),
     cors = require('cors'),
     bodyParser = require('body-parser'),
     request = require("request"),
@@ -41,7 +42,9 @@ app.listen(port,() => console.log(`Listening on port ${port}`));
 // Route Middlewares
 app.use('/api/user', authRoute);
 app.use('/api/posts', postRoute);
-app.use('/api/food', fatsecretRoute)
+app.use('/api/food', fatsecretRoute);
+app.use('/api/meals', mealsRoute);
+
 
 //THIS IS NEEDED TO KEEP HEROKU-API AWAKE
 var ping = {
