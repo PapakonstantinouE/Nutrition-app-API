@@ -19,7 +19,7 @@ const registerValidation = data => {
 const loginValidation = data =>{
     const schema = {
         username: Joi.string().min(4).required(),
-        password: Joi.string().min(6).required()
+        password: Joi.string().min(4).required()
     };
     return Joi.validate(data, schema);
 };

@@ -1,10 +1,4 @@
 const mongoose = require('mongoose');
-// const moment = require('moment-timezone');
-
-// const dateGreece = moment.tz(Date.now(), "Europe/Athens");
-// var test = new Date().toLocaleString("en-US", {timeZone: "Europe/Athens"})
-// console.log(test);
-// var utcDate = moment.utc().toDate();
 
 const mealSchema = new mongoose.Schema({
     mealkind: {
@@ -16,12 +10,11 @@ const mealSchema = new mongoose.Schema({
         required: true
     },
     date: {
-        type: Date,
-        default: Date.now
+        type: Date
     },
     ingredients:[
         {
-            food_id: String,
+            fatSecret_id: String,
             food_name: String,
             serving: String,
             quantity: Number,
@@ -42,7 +35,7 @@ const mealSchema = new mongoose.Schema({
             calories: String
         }    
     ],
-    calories: String 
+    calories: Number 
 });
 
 module.exports = mongoose.model('Meal', mealSchema)
