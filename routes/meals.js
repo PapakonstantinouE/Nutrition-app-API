@@ -150,31 +150,15 @@ router.delete('/deleteMeal/:date/:meal/:food_id', verify, (req,res,next) => {
     var startDate = new Date(Date.UTC(b[0], --b[1], b[2]));
     var endDate =  new Date(Date.UTC(b[0], b[1], ++b[2]));
 
-    Meals.findOne({user_id: userReq, mealkind: mealReq, date: {$gte: startDate, $lt: endDate}})
-    .then((meal) => 
-        //den douleuei, xtupaei sto meal.ingredients.fatSecret_id
-        {if (meal != null && meal.ingredients.fatSecret_id(food_id) != null) {
-            meal.ingredients.fatSecret_id(food_id).remove();
-            meal.save()
-            .then((meal) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(meal);                
-            }, (err) => next(err));
-        }
-        else if (meal == null) {
-            err = new Error('Meal ' + mealReq + ' not found');
-            err.status = 404;
-            return next(err);
-        }
-        else {
-            err = new Error('Food ' +food_id + ' not found');
-            err.status = 404;
-            return next(err);            
-        }
+    Meals.updateOne( {user_id: userReq, mealkind: mealReq, date: {$gte: startDate, $lt: endDate}},
+        {$pull:{ingredients:{fatSecret_id: food_id}}},
+        { new: true })
+    .then((meal) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(meal);
     }, (err) => next(err))
     .catch((err) => next(err));
-
 
 });
 
