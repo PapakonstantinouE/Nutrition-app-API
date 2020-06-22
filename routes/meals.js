@@ -4,29 +4,80 @@ const Meals = require ('../model/meal');
 const verify = require('./verifyToken');
 
 
-router.post('/getDailyMeals', verify, (req,res,next) => {
+
+router.get('/getDailyMeals', verify, (req,res,next) => {
     console.log(req.body)
     var user = req.user._id;
     Meals.find({user_id: user, date: {$gte: "2020-05-24T21:00:00.000+00:00", $lt: "2020-05-25T21:00:00.000+00:00"}})
     //{$gte: "2020-05-18T21:00:00.000+00:00", $lt: "2020-05-19T21:00:00.000+00:00"}
     .then((meals) => {
+        var totalPr = 0;
+        var totalCalcium = 0;
+        var totalChol = 0;
+        var totalCarbo = 0;
+        var totalIron = 0;
+        var totalFat = 0;
+        
         
         for(i=0;i<meals.length;i++){
-            var counter = 0;
+            
+            
             var ingNum = meals[i].ingredients.length;
             for(j=0; j<ingNum; j++){
-                console.log(meals[i].ingredients[j].nutrients.sodium);
-                var sodium = meals[i].ingredients[j].nutrients.sodium;
-                counter += sodium;
-                console.log(counter);
+                var iron = Number(meals[i].ingredients[j].nutrients.iron);
+                totalIron += iron;
+                var protein = Number(meals[i].ingredients[j].nutrients.protein);
+                totalPr += protein;
+                var calcium = Number(meals[i].ingredients[j].nutrients.calcium);
+                totalCalcium += calcium;
+                var chole = Number(meals[i].ingredients[j].nutrients.cholesterol);
+                totalChol += chole;
+                var carbo = Number(meals[i].ingredients[j].nutrients.carbohydrate);
+                totalCarbo += carbo;
+                var fat = Number(meals[i].ingredients[j].nutrients.fat);
+                totalFat += fat;
+                
+                
+                
             }
+            
         }
+        
+        //console.log(`Total Sodium ${totalSod} `);
+        console.log(`Total protein ${totalPr} `);
+        
+        
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json(meals);
+        res.send([totalPr, totalCalcium, totalChol,totalCarbo,totalIron,totalFat])
+        //res.json(data);
     }, (err) => next(err))
     .catch((err) => next(err));
 })
+
+router.get('/getDailyCalories', verify, (req,res,next) => {
+    console.log(req.body)
+    var user = req.user._id;
+    Meals.find({user_id: user, date: {$gte: "2020-05-24T21:00:00.000+00:00", $lt: "2020-05-25T21:00:00.000+00:00"}})
+    //{$gte: "2020-05-18T21:00:00.000+00:00", $lt: "2020-05-19T21:00:00.000+00:00"}
+    .then((meals) => {
+        var totalCal =0;
+        for(i=0;i<meals.length;i++){
+            var cal = meals[i].calories;
+            totalCal += cal;            
+        }
+        
+        console.log(`Total Calories ${totalCal} `);
+        
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.send([totalCal]);
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+
 
 router.put('/addMeal', verify, (req,res,next) => {
     var userReq = req.user._id
