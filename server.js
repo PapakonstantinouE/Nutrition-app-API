@@ -61,8 +61,6 @@ var ping = {
 var j = schedule.scheduleJob({hour: 06, minute: 00}, function(){
     updateToken()
 });
-app.get('/api/chart', (req,res) => {
-    res.send([10,3,29,11,17,14])
-})
+
 
 app.get('/updateToken', (req,res) => {updateToken();res.end("Token updated and is printed on console")})
