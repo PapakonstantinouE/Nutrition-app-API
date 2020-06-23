@@ -153,13 +153,85 @@ router.delete('/deleteMeal/:date/:meal/:food_id', verify, (req,res,next) => {
     Meals.updateOne( {user_id: userReq, mealkind: mealReq, date: {$gte: startDate, $lt: endDate}},
         {$pull:{ingredients:{fatSecret_id: food_id}}},
         { new: true })
-    .then((meal) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(meal);
+    .then(() => {
+        Meals.findOne({user_id: userReq, mealkind: mealReq, date: {$gte: startDate, $lt: endDate}})
+        .then((meal) => {
+            var totalCal =0;
+            for(i=0;i<meal.ingredients.length;i++){
+                var cal = Number(meal.ingredients[i].calories);
+                totalCal += cal;            
+            }
+            meal.calories = totalCal;
+            meal.save()
+            .then((meal) => {
+                console.log(totalCal)
+                console.log(meal)
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(meal);                
+            }, (err) => next(err));
+        }, (err) => next(err))
+        .catch((err) => next(err));
     }, (err) => next(err))
     .catch((err) => next(err));
 
 });
+
+router.get('/getMealsNutri/:date', verify, (req,res,next) => {
+    console.log(req.body)
+    var user = req.user._id;
+    var dateReq = req.params.date;
+
+
+    var b = dateReq.split(/\D+/);
+    var startDate = new Date(Date.UTC(b[0], --b[1], b[2]));
+    var endDate =  new Date(Date.UTC(b[0], b[1], ++b[2]));
+
+    Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
+    .then((meals) => {
+        var nutrients=[];
+
+        for(i=0;i<meals.length;i++){
+            var Protein = 0;
+            var Fiber = 0;
+            var Carbohydrate = 0;
+            var Fat = 0;
+            var Energy = 0;
+            for(j=0; j<meals[i].ingredients.length; j++){
+                Protein += Number(meals[i].ingredients[j].nutrients.protein);
+                Fiber += Number(meals[i].ingredients[j].nutrients.calcium);
+                Carbohydrate += Number(meals[i].ingredients[j].nutrients.carbohydrate);
+                Fat +=  Number(meals[i].ingredients[j].nutrients.fat);
+            }
+            Energy = meals[i].calories;
+            switch (meals[i].mealkind){
+                case 'breakfast':
+                    var brNutrients = {mealkind: "brNutrients", nutrients: {Energy, Fat,Carbohydrate,Protein,Fiber}}
+                    nutrients.push(brNutrients)
+                break;
+                case 'lunch':
+                    var lnNutrients = {mealkind: "lnNutrients", nutrients: {Energy, Fat,Carbohydrate,Protein,Fiber}}
+                    nutrients.push(lnNutrients)
+                break;
+                case 'dinner':
+                    var dnNutrients = {mealkind: "dnNutrients", nutrients: {Energy, Fat,Carbohydrate,Protein,Fiber}}
+                    nutrients.push(dnNutrients)
+                break;
+                case 'snack':
+                    var snNutrients = {mealkind: "snNutrients", nutrients: {Energy, Fat,Carbohydrate,Protein,Fiber}}
+                    nutrients.push(snNutrients)
+                break;
+                
+            }
+
+
+        }
+        console.log(nutrients)
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(nutrients)
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
 
 module.exports = router;
