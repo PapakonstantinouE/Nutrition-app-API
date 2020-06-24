@@ -238,11 +238,16 @@ router.get('/getMealsNutri/:date', verify, (req,res,next) => {
             var Energy = 0;
             for(j=0; j<meals[i].ingredients.length; j++){
                 Protein += Number(meals[i].ingredients[j].nutrients.protein);
-                Fiber += Number(meals[i].ingredients[j].nutrients.calcium);
+                Fiber += Number(meals[i].ingredients[j].nutrients.fiber);
                 Carbohydrate += Number(meals[i].ingredients[j].nutrients.carbohydrate);
                 Fat +=  Number(meals[i].ingredients[j].nutrients.fat);
             }
             Energy = meals[i].calories;
+            //stroggullopoiei ola ta telika posa sto 2o dekadiko kai meta ta stelnei pisw sto front
+            Protein = (Protein).toFixed(2)
+            Fiber = (Fiber).toFixed(2)
+            Carbohydrate = (Carbohydrate).toFixed(2)
+            Fat = (Fat).toFixed(2)
             switch (meals[i].mealkind){
                 case 'breakfast':
                     var brNutrients = {mealkind: "brNutrients", nutrients: {Energy, Fat,Carbohydrate,Protein,Fiber}}
