@@ -217,7 +217,6 @@ router.delete('/deleteMeal/:date/:meal/:food_id', verify, (req,res,next) => {
 });
 
 router.get('/getMealsNutri/:date', verify, (req,res,next) => {
-    console.log(req.body)
     var user = req.user._id;
     var dateReq = req.params.date;
 
@@ -270,7 +269,6 @@ router.get('/getMealsNutri/:date', verify, (req,res,next) => {
 
 
         }
-        console.log(nutrients)
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(nutrients)
