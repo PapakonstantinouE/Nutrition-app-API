@@ -83,6 +83,38 @@ router.get('/getDailyCalories/:date', verify, (req,res,next) => {
     .catch((err) => next(err));
 })
 
+router.get('/getWeeklyCalories/:date', verify, (req,res,next) => {
+    console.log(req.body)
+    var user = req.user._id;
+    var dateReq = req.params.date;
+
+    //pairnw thn imeromhnia apo to json, thn spaw kai ftiaxnw 2 imeromhnies 
+    //thn arxh kai to telos ths hmeras pou thelw na psa3w gia geumata
+    var b = dateReq.split(/\D+/);
+    var startDate = new Date(Date.UTC(b[0], --b[1], b[2]));
+    var endDate =  new Date(Date.UTC(b[0], b[1], ++b[2]));
+
+    console.log(Date(Date.UTC(b[0])));
+
+    Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
+  
+    .then((meals) => {
+        var totalCal =0;
+        for(i=0;i<meals.length;i++){
+            var cal = meals[i].calories;
+            totalCal += cal;            
+        }
+        
+        console.log(`Total Calories ${totalCal} `);
+        
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.send([totalCal]);
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
 
 
 router.put('/addMeal', verify, (req,res,next) => {
