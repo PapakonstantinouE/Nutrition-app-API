@@ -23,30 +23,38 @@ router.get('/getDailyStats/:date', verify, (req,res,next) => {
         var totalCarbo = 0;
         var totalIron = 0;
         var totalFat = 0;               
+        var totalSod = 0;
+        var totalFiber = 0;
+        var totalPotas = 0;
+        var totalSug = 0;
+        var totalVitA = 0;
+        var totalVitC = 0;              
         for(i=0;i<meals.length;i++){        
             var ingNum = meals[i].ingredients.length;
             for(j=0; j<ingNum; j++){
-                var iron = Number(meals[i].ingredients[j].nutrients.iron);
-                totalIron += iron;
-                var protein = Number(meals[i].ingredients[j].nutrients.protein);
-                totalPr += protein;
-                var calcium = Number(meals[i].ingredients[j].nutrients.calcium);
-                totalCalcium += calcium;
-                var chole = Number(meals[i].ingredients[j].nutrients.cholesterol);
-                totalChol += chole;
-                var carbo = Number(meals[i].ingredients[j].nutrients.carbohydrate);
-                totalCarbo += carbo;
-                var fat = Number(meals[i].ingredients[j].nutrients.fat);
-                totalFat += fat;              
+                totalIron += Number(meals[i].ingredients[j].nutrients.iron);
+                totalPr += Number(meals[i].ingredients[j].nutrients.protein);
+                totalCalcium += Number(meals[i].ingredients[j].nutrients.calcium);
+                totalChol += Number(meals[i].ingredients[j].nutrients.cholesterol);
+                totalCarbo += Number(meals[i].ingredients[j].nutrients.carbohydrate);
+                totalFat += Number(meals[i].ingredients[j].nutrients.fat);
                 
+                totalSod += Number(meals[i].ingredients[j].nutrients.sodium);
+                totalFiber += Number(meals[i].ingredients[j].nutrients.fiber);
+                totalPotas += Number(meals[i].ingredients[j].nutrients.potassium);
+                totalSug += Number(meals[i].ingredients[j].nutrients.sugar);
+                totalVitA += Number(meals[i].ingredients[j].nutrients.vitamin_a);
+                totalVitC += Number(meals[i].ingredients[j].nutrients.vitamin_c);               
                 }
             
         }
-        console.log(`Total protein ${totalPr} `);
-                
+        var nutriTable = [totalPr,totalCalcium,totalChol,totalCarbo,totalIron,totalFat,totalSod,totalFiber,totalPotas,totalSug,totalVitA,totalVitC]
+        for(i=0; i<nutriTable.length; i++){
+            nutriTable[i] = nutriTable[i].toFixed(2)
+        }
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.send([totalPr, totalCalcium, totalChol,totalCarbo,totalIron,totalFat])
+        res.send(nutriTable)
         //res.json(data);
     }, (err) => next(err))
     .catch((err) => next(err));
