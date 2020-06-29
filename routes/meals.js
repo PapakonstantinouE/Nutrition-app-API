@@ -91,73 +91,45 @@ router.get('/getDailyCalories/:date', verify, (req,res,next) => {
     .catch((err) => next(err));
 })
 
-router.get('/getWeeklyCalories/:date', verify, (req,res,next) => {
-    console.log(req.body)
+
+
+router.get('/getWeeklyCalories/:date', verify, async (req,res,next) => {
+    
     var user = req.user._id;
     var dateReq = req.params.date;
 
     //pairnw thn imeromhnia apo to json, thn spaw kai ftiaxnw 2 imeromhnies 
     //thn arxh kai to telos ths hmeras pou thelw na psa3w gia geumata
     var b = dateReq.split(/\D+/);
-   
 
-    
-    //var totalCal = 0; 
-    for(i=6;i>=0;i--){
-        var tableCal = [];
+    var tableCal = [];
+    var i = 6;
+    for(i;i>=0;i--){
+        
         var startDate = new Date(Date.UTC(b[0], b[1]-1, b[2]-i))
         var endDate =  new Date(Date.UTC(b[0], b[1]-1, b[2]-(i-1)));
-        console.log(startDate);
-        console.log(endDate);
         
-        Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
-        .then((meals) => {
-            totalCal=0
-            for(j=0;j<meals.length;j++){
-                
-                var cal = meals[j].calories;
-                totalCal += cal;
-                //console.log(totalCal)
-            }
-        //var tableCal= [totalCal];
-        tableCal[i]=totalCal 
-        console.log(tableCal[i]);
+        const meals = await Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
         
+        var totalCal=0
+        for(j=0;j<meals.length;j++){
+            var cal = meals[j].calories;
+            totalCal += cal;
         }
-        )
-        
-        
-
+        // antistrefw ton pinaka
+        tableCal[6-i]=totalCal;
         
     }
-   //console.log(tableCal[1]);
     
+    if(i==-1){
         
-        // res.statusCode = 200;
-        // res.setHeader('Content-Type', 'application/json');
-        // res.send([totalCal]);
-    
-
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.send(tableCal);
+    }
    
-
-    //     Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
-    
-    //     .then((meals) => {
-    //         var totalCal =0;
-    //         for(j=0;j<meals.length;j++){
-    //             var cal = meals[j].calories;
-    //             totalCal += cal;            
-    //         }
-       
-    //     console.log(`Total Calories ${totalCal} `);
-        
-    //     res.statusCode = 200;
-    //     res.setHeader('Content-Type', 'application/json');
-    //     res.send([totalCal]);
-        
-    // }, (err) => next(err))
-    // .catch((err) => next(err));
 })
+
 
 
 
