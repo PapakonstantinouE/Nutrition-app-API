@@ -130,6 +130,48 @@ router.get('/getWeeklyCalories/:date', verify, async (req,res,next) => {
    
 })
 
+router.get('/getWeeklynutri/:date/:nutri', verify, async (req,res,next) => {
+    
+    var user = req.user._id;
+    var dateReq = req.params.date;
+    var nutri = req.params.nutri;
+    
+    //pairnw thn imeromhnia apo to json, thn spaw kai ftiaxnw 2 imeromhnies 
+    //thn arxh kai to telos ths hmeras pou thelw na psa3w gia geumata
+    var b = dateReq.split(/\D+/);
+
+    var tableNutri = [];
+    var i = 6;
+    for(i;i>=0;i--){
+        
+        var startDate = new Date(Date.UTC(b[0], b[1]-1, b[2]-i))
+        var endDate =  new Date(Date.UTC(b[0], b[1]-1, b[2]-(i-1)));
+        
+        const meals = await Meals.find({user_id: user, date: {$gte: startDate, $lt: endDate}})
+        
+        var totalNutri=0
+        for(j=0;j<meals.length;j++){
+            var ingNum = meals[j].ingredients.length;
+            
+            for(k=0; k<ingNum; k++){ 
+                var nut = meals[j].ingredients[k].nutrients[nutri]
+                totalNutri += Number(nut)
+            }
+        }
+        // antistrefw ton pinaka
+        tableNutri[6-i]=totalNutri;
+        
+    }
+    
+    if(i==-1){
+        
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.send(tableNutri);
+    }
+   
+})
+
 
 
 
