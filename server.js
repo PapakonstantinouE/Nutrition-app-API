@@ -1,7 +1,6 @@
 const express = require('express'),
     updateToken = require('./routes/tokenUpdate'),
     authRoute = require('./routes/auth'),
-    postRoute = require('./routes/posts'),
     fatsecretRoute = require('./routes/fatsecret'),
     mealsRoute = require('./routes/meals'),
     cors = require('cors'),
@@ -41,7 +40,6 @@ app.listen(port,() => console.log(`Listening on port ${port}`));
 
 // Route Middlewares
 app.use('/api/user', authRoute);
-app.use('/api/posts', postRoute);
 app.use('/api/food', fatsecretRoute);
 app.use('/api/meals', mealsRoute);
 

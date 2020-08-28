@@ -3,13 +3,6 @@ const request = require("request");
 const Token = require("../model/fatsecretToken");
 require('dotenv').config();
 
-// var pool = mysql.createPool({
-//     host: process.env.DB_HOST,
-//     port: process.env.DB_PORT,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_NAME
-// });
 
 //NECESSARY TO VALIDATE FATSECRET TOKEN
 clientID = process.env.CLIENT_ID,
@@ -43,12 +36,6 @@ module.exports = function(req,res,next){
                 console.log("Token successfully updated "+token)
             }
         })
-
-        //FOR MYSQL
-        // pool.query(`UPDATE fatsecret SET time = ${current_time+86400}, token = '${token}' WHERE id = 1`, function (err){
-        //     console.log("Token successfully updated "+token)
-        // })
-
         return token;
     });
 }

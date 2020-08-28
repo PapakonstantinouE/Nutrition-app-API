@@ -109,11 +109,11 @@ router.post('/login', async (req, res) => {
 
     //CHECKING IF USER ALREADY EXISTS
     const user = await User.findOne({username: req.body.username})
-    if (!user) return res.status(400).send("Username doesn't exists");
+    if (!user) return res.status(400).send("Invalid username or password");
  
     //PASSWORD IS CORRECT
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if(!validPass) return res.status(400).send("Invalid password");
+    if(!validPass) return res.status(400).send("Invalid username or password");
 
     const token = jwt.sign({_id: user._id, username: user.username, bmi: user.bmi, bmr: user.bmr},process.env.TOKEN_SECRET , { expiresIn: '24h' });
     res.header('auth-token', token).send('Logged in!');
